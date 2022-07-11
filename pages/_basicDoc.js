@@ -12,23 +12,21 @@ import {
 
 import { data } from './api/data/index.js'
 
-const font = 'Times-Roman'
-// const font = 'Courier'
+// const font = 'Times-Roman'
+const font = 'Courier'
 
 export default function BasicDocument() {
   const [selectedFile, setSelectedFile] = useState(data.fileList[0])
-  const [selectedVersion, setSelectedVersion] = useState('old')
-  // const selectedPdf = data[selectedFile].file
-  // const selectedOldExtractor = data[selectedFile].old
-  // const selectedNewExtractor = data[selectedFile].new
+  const [selectedVersion, setSelectedVersion] = useState('new')
+
   const extractedData = data[selectedFile][selectedVersion]
   const maxW = data[selectedFile].res.w
   const maxH = data[selectedFile].res.h
   const pages = data[selectedFile].pages
   console.log(extractedData)
 
-  const [showWord, setShowWord] = useState(true)
-  const [showLine, setShowLine] = useState(false)
+  const [showWord, setShowWord] = useState(false)
+  const [showLine, setShowLine] = useState(true)
   const [showPage, setShowPage] = useState(false)
 
   const handleShowWordChange = () => {
