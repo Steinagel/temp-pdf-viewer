@@ -1,8 +1,23 @@
 import { useState, useEffect } from 'react'
 import ReactJsonPretty from 'react-json-pretty'
 import InputRange from 'react-input-range'
-import useDebounce from './hooks/useDebounce'
 import 'react-input-range/lib/css/index.css'
+
+function useDebounce(value, delay) {
+  const [debouncedValue, setDebouncedValue] = useState(value);
+  useEffect(
+    () => {
+      const handler = setTimeout(() => {
+        setDebouncedValue(value);
+      }, delay);
+      return () => {
+        clearTimeout(handler);
+      };
+    },
+    [value, delay]
+  );
+  return debouncedValue;
+}
 
 export default function JsonView({ json: jsonRes }) {
   const [len, setLen] = useState(1)

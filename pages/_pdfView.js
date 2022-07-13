@@ -1,12 +1,27 @@
 import { useState, useEffect } from 'react'
 import styles from '../styles/Home.module.css'
 import { Document, Page, pdfjs } from 'react-pdf'
-import useDebounce from './hooks/useDebounce'
 
 import _pdfjsWorker from '../pdf-worker'
 // const pdfjsWorker = await import('pdfjs-dist/build/pdf.worker.js');
 
 pdfjs.GlobalWorkerOptions.workerSrc = _pdfjsWorker
+
+function useDebounce(value, delay) {
+  const [debouncedValue, setDebouncedValue] = useState(value);
+  useEffect(
+    () => {
+      const handler = setTimeout(() => {
+        setDebouncedValue(value);
+      }, delay);
+      return () => {
+        clearTimeout(handler);
+      };
+    },
+    [value, delay]
+  );
+  return debouncedValue;
+}
 
 export default function PDFViewer({ onDocumentLoadSuccess, file, pages, setDimensions, setFonts }) {
   const [sizes, setSizes] = useState([])
