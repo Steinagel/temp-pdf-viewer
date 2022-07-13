@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import styles from '../styles/Home.module.css'
 import { Document, Page, pdfjs } from 'react-pdf'
-import useDebounce from './_useDebounce'
+import useDebounce from './hooks/useDebounce'
 
 import _pdfjsWorker from '../pdf-worker'
 // const pdfjsWorker = await import('pdfjs-dist/build/pdf.worker.js');

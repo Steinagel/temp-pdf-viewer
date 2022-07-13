@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import ReactJsonPretty from 'react-json-pretty'
 import InputRange from 'react-input-range'
-import useDebounce from './_useDebounce'
+import useDebounce from './hooks/useDebounce'
 import 'react-input-range/lib/css/index.css'
 
 export default function JsonView({ json: jsonRes }) {
