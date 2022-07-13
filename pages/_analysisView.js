@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 import randomColor from 'randomcolor'
+import Select from 'react-select'
 
 import {
   Document,
@@ -10,20 +11,25 @@ import {
   Canvas
 } from '@react-pdf/renderer'
 
-import { data } from './api/data/index.js'
+const fontsOptions = [
+  'Courier',
+  'Courier-Bold',
+  'Courier-Oblique',
+  'Courier-BoldOblique',
+  'Helvetica',
+  'Helvetica-Bold',
+  'Helvetica-Oblique',
+  'Helvetica-BoldOblique',
+  'Symbol',
+  'Times-Roman',
+  'Times-Bold',
+  'Times-Italic',
+  'Times-BoldItalic'
+]
 
-// const font = 'Times-Roman'
-const font = 'Courier'
+export default function AnalysisView({ pages = 0, json = [], fonts, dimensions }) {
 
-export default function BasicDocument() {
-  const [selectedFile, setSelectedFile] = useState(data.fileList[0])
-  const [selectedVersion, setSelectedVersion] = useState('new')
-
-  const extractedData = data[selectedFile][selectedVersion]
-  const maxW = data[selectedFile].res.w
-  const maxH = data[selectedFile].res.h
-  const pages = data[selectedFile].pages
-  console.log(extractedData)
+  const [font, setFont] = useState(fontsOptions[0])
 
   const [showWord, setShowWord] = useState(false)
   const [showLine, setShowLine] = useState(true)
@@ -68,12 +74,13 @@ export default function BasicDocument() {
       width: window.innerWidth * 0.9,
       height: window.innerHeight * 0.92,
     },
-    canvas: {
+    canvas: dimensions.map((dimension, index) => ({
       backgroundColor: "transparent",
-      width: maxW,
-      height: maxH,
-    }
-  }), [])
+      width: dimension.maxW,
+      height: dimension.maxH,
+      key: index
+    }))
+  }), [dimensions])
 
   const renderPol = (painterObject, obj, page) => {
     if (!(obj.Page === page)) return
@@ -83,6 +90,8 @@ export default function BasicDocument() {
     if (!showWord && type === 'WORD') return
     if (!showLine && type === 'LINE') return
     if (!showPage && type === 'PAGE') return
+
+    const { maxW, maxH } = dimensions[page - 1]
 
     if (showPolygon) {
       const polygon = obj.Geometry.Polygon
@@ -160,22 +169,20 @@ export default function BasicDocument() {
   const PageComponentList = []
   for (let p = 1; p <= pages; p++) {
     PageComponentList.push(
-      <>
-        <Page size={{ width: maxW, height: maxH }} style={pdfStyles.page}>
-          <View style={pdfStyles.section}>
-          <Canvas
-            style={pdfStyles.canvas}
-            paint={
-              (painterObject) => {
-                extractedData.map(obj => {
-                  renderPol(painterObject, obj, p)
-                })
-              }
+      <Page key={p} size={{ width: dimensions[p - 1].maxW, height: dimensions[p - 1].maxH }} style={pdfStyles.page}>
+        <View style={pdfStyles.section}>
+        <Canvas
+          style={pdfStyles.canvas[p - 1]}
+          paint={
+            (painterObject) => {
+              json.map(obj => {
+                renderPol(painterObject, obj, p)
+              })
             }
-          />
-          </View>
-        </Page>
-      </>
+          }
+        />
+        </View>
+      </Page>
     )
   }
 
@@ -234,88 +241,21 @@ export default function BasicDocument() {
           Invert
         </label>
         <br />
-      </div>
-      <br />
-      <div style={{width: '48%'}}>
-        <label>
-          <input
-            type="radio"
-            checked={selectedVersion === 'old'}
-            value="old"
-            onChange={e => setSelectedVersion('old')}
-          />
-          old
-        </label>
-        <label>
-          <input
-            type="radio"
-            checked={selectedVersion === 'new'}
-            value="new"
-            onChange={e => setSelectedVersion('new')}
-          />
-          new
-        </label>
+        <br />
+        <Select
+          placeholder="Select the font"
+          defaultValue={fontsOptions[0]}
+          name="font-select"
+          options={fontsOptions.map(i => ({value: i, label: i}))}
+          value={{value: font, label: font}}
+          onChange={option => setFont(option.value)}
+        />
+        <br />
       </div>
       <br />
       <PDFViewer style={pdfStyles.viewer}>
         <Document>
           {PageComponentList}
-          {/* <Page size={{ width: maxW, height: maxH }} style={pdfStyles.page}>
-            <View style={pdfStyles.section}>
-            <Canvas
-              style={pdfStyles.canvas}
-              paint={
-                (painterObject) => {
-                  extractedData.map(obj => {
-                    renderPol(painterObject, obj, 1)
-                  })
-                }
-              }
-            />
-            </View>
-          </Page>
-          <Page size={{ width: maxW, height: maxH }} style={pdfStyles.page}>
-            <View style={pdfStyles.section}>
-            <Canvas
-              style={pdfStyles.canvas}
-              paint={
-                (painterObject) => {
-                  extractedData.map(obj => {
-                    renderPol(painterObject, obj, 2)
-                  })
-                }
-              }
-            />
-            </View>
-          </Page> */}
-          {/* <Page size={{ width: maxW, height: maxH }} style={pdfStyles.page}>
-            <View style={pdfStyles.section}>
-            <Canvas
-              style={pdfStyles.canvas}
-              paint={
-                (painterObject) => {
-                  data.map(obj => {
-                    renderPol(painterObject, obj, 3)
-                  })
-                }
-              }
-            />
-            </View>
-          </Page> */}
-          {/* <Page size={{ width: maxW, height: maxH }} style={pdfStyles.page}>
-            <View style={pdfStyles.section}>
-            <Canvas
-              style={pdfStyles.canvas}
-              paint={
-                (painterObject) => {
-                  data.map(obj => {
-                    renderPol(painterObject, obj, 4)
-                  })
-                }
-              }
-            />
-            </View>
-          </Page> */}
         </Document>
       </PDFViewer>
     </div>

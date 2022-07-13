@@ -114,3 +114,30 @@
     flex-direction: column;
   }
 }
+
+.droppers {
+  display: flex;
+  column-gap: 10px;
+}
+
+.tab {
+  display: flex;
+  column-gap: 20px;
+  margin-top: 20px;
+}
+
+.pdf {
+  max-width: 80vw;
+}
+
+.page {
+  border: solid 1px rgb(67, 67, 67);
+  margin-top: 10px;
+  margin-bottom: 10px;
+  max-width: 100%;
+}
+
+.page > canvas {
+  max-width: 100%;
+  height: fit-content !important;
+}
