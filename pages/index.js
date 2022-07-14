@@ -4,9 +4,9 @@ import dynamic from 'next/dynamic'
 import { FileUploader } from 'react-drag-drop-files'
 import styles from '../styles/Home.module.css'
 
-const AnalysisView = dynamic(() => { return import('./_analysisView') }, { ssr: false })
-const PdfView = dynamic(() => { return import('./_pdfView') }, { ssr: false })
-const JsonView = dynamic(() => { return import('./_jsonView') }, { ssr: false })
+const AnalysisView = dynamic(() => { return import('../components/_analysisView') }, { ssr: false })
+const PdfView = dynamic(() => { return import('../components/_pdfView') }, { ssr: false })
+const JsonView = dynamic(() => { return import('../components/_jsonView') }, { ssr: false })
 
 
 export default function Home() {
